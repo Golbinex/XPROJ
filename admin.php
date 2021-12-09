@@ -57,16 +57,19 @@
                     try {
                         $sql = "CREATE TABLE edookit_zmeny (
                             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                            puvodni_datum DATETIME,
-                            nove_datum DATETIME,
+                            puvodni_datum_od DATETIME,
+                            puvodni_datum_do DATETIME,
+                            nove_datum_od DATETIME,
+                            nove_datum_do DATETIME,
                             trida VARCHAR(63),
                             puvodni_ucitel VARCHAR(63),
                             novy_ucitel VARCHAR(63),
-                            pudovni_kurz VARCHAR(127),
+                            puvodni_kurz VARCHAR(127),
                             novy_kurz VARCHAR(127),
                             puvodni_mistnost VARCHAR(63),
                             nova_mistnost VARCHAR(63),
-                            udalost VARCHAR(127)
+                            udalost VARCHAR(127),
+                            UNIQUE(puvodni_datum_od, puvodni_datum_do, nove_datum_od, nove_datum_do, trida, puvodni_ucitel, novy_ucitel, puvodni_kurz, novy_kurz, puvodni_mistnost, nova_mistnost, udalost)
                         )";
                         $pdo->exec($sql);
                     } catch (Exception $e) {
@@ -126,7 +129,7 @@
                     Uživatelské jméno k SQL serveru:<br><input type='text' name='sql_username' value='".$config['sql_username']."' required='required'><br>
                     Heslo k SQL serveru:<br><input type='text' name='sql_password' value='".$config['sql_password']."' required='required'><br>
                     SQL databáze:<br><input type='text' name='sql_database' value='".$config['sql_database']."' required='required'><br>
-                    Heslo k administraci:<br><input type='text' name='admin_password' value='".$config['admin_password']."' required='required'><br>
+                    Heslo k administraci:<br><input type='text' name='admin_password' value='".$config['admin_password']."' required='required'><br><br>
                     <input type='submit' name='button_save' value='Uložit'>
                     <input type='button' value='Zobrazit rozvrh' onclick=\"window.location.href='index.php';\">
                     <input type='submit' name='button_logout' value='Odhlásit'>
