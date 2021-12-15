@@ -73,8 +73,8 @@
 		<div>
 		<table>
 			<?php
+				if(!isset($_SESSION['sort'])) $_SESSION['sort'] = "puvodni_datum_od";
 				if($_SESSION['authenticated'] == true) {
-					if(!isset($_SESSION['sort'])) $_SESSION['sort'] = "puvodni_datum_od";
 					if(isset($_GET['sort'])) $_SESSION['sort'] = $_GET['sort'];
 					if(isset($_GET['reverse'])) $_SESSION['reverse'] = filter_var($_GET['reverse'], FILTER_VALIDATE_BOOLEAN);
 					// Funkce pro zobrazení třídícího tlačítka
