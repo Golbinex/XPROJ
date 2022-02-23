@@ -1,5 +1,6 @@
 <?php
     session_start();
+    include('functions.php');
 ?>
 <!doctype HTML>
 <html>
@@ -14,13 +15,13 @@
                 $config = include('config_default.php');
                 echo "<h1>Instalace aplikace</h1>";
                 adminform();
-                $_SESSION['authenticated'] = true;
+                setAuthenticated(true);
                 exit;
             } else {
                 $config = include('config.php');
             }
             // Pokud je uživatel přihlášen/první instalace a odeslal údaje k formuláři
-            if($_SESSION['authenticated'] == true and isset($_POST['button_save'])) {
+            if(isAuthenticated() and isset($_POST['button_save'])) {
                 // API údaje jsou v pořádku, zapsat do proměnné
                 $config['edookit_host'] = $_POST['edookit_host'];
                 $config['edookit_username'] = $_POST['edookit_username'];
@@ -87,14 +88,14 @@
                 adminForm("Údaje byly úspěšně uloženy", "green");
                 exit();
             } else if (isset($_POST['button_logout'])) {
-                $_SESSION['authenticated'] = false;
+                setAuthenticated(false);
             }
             // Pokud se shoduje zadané heslo s uloženým heslem, přihlásit uživatele
             if ($_POST['admin_password_login'] == $config['admin_password']) {
-                $_SESSION['authenticated'] = true;
+                setAuthenticated(true);
             }
             // Pokud uživatel není přihlášen
-            if(!isset($_SESSION['authenticated']) or $_SESSION['authenticated'] == false) {
+            if(!isAuthenticated()) {
                 
                 // Vypsat chybu o nesprávném heslu pokud bylo zadáno, jinak nevypisovat nic
                 if (isset($_POST['admin_password_login']) and $_POST['admin_password_login'] != $config['admin_password']) {

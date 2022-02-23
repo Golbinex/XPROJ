@@ -5,6 +5,7 @@
 		exit;
 	}
 	session_start();
+	include('functions.php');
 ?>
 <!DOCTYPE html>
 <html>
@@ -14,14 +15,14 @@
 		<?php
 			// Pokud se stisklo tlačítko "Odhlásit"
 			if (isset($_POST['button_logout'])) {
-				$_SESSION['authenticated'] = false;
+				setAuthenticated(false);
 				$_SESSION['date_from'] = date("Y-m-d");
 				$_SESSION['date_to'] = date("Y-m-d");
 				$_SESSION['sort'] = "puvodni_datum_od";
 				$_SESSION['reverse'] = false;
 			}
 			// Pokud je uživatel přihlášen, zobrazovat jen jeden sloupec, jinak zobrazovat dva
-			if($_SESSION['authenticated'] == true) {
+			if(isAuthenticated()) {
 				echo "
 				<style>
 					div {
@@ -46,7 +47,7 @@
 		<div class="buttons">
 			<?php
 				// Tlačítkové menu
-				if($_SESSION['authenticated'] == true) {
+				if(isAuthenticated()) {
 					echo "
 					<form action='index.php' method='post'>
 						<input type='button' value='Administrace' onclick=\"window.location.href='admin.php';\">
@@ -74,7 +75,7 @@
 		<table>
 			<?php
 				if(!isset($_SESSION['sort'])) $_SESSION['sort'] = "puvodni_datum_od";
-				if($_SESSION['authenticated'] == true) {
+				if(isAuthenticated()) {
 					if(isset($_GET['sort'])) $_SESSION['sort'] = $_GET['sort'];
 					if(isset($_GET['reverse'])) $_SESSION['reverse'] = filter_var($_GET['reverse'], FILTER_VALIDATE_BOOLEAN);
 					// Funkce pro zobrazení třídícího tlačítka
@@ -279,7 +280,7 @@
 					echo "<tr class='".$styl."'>";
 					echo "<td>".$trida."</td>";
 					// Při přihlášení zobrazovat datum
-					if($_SESSION['authenticated'] == true) {
+					if(isAuthenticated()) {
 						echo "<td>".date("d/m/Y", strtotime($puvodni_hodina))."</td>";
 					}
 					// Hodina
