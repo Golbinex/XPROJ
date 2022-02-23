@@ -33,7 +33,7 @@ td {
 s {
     padding-right: 3px;
 }
-input[type=text] {
+input[type=text], input[type=password] {
     width: 300px;
 }
 .scheduled_td {

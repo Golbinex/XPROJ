@@ -110,7 +110,7 @@
                 echo "
                 <h1>Přihlášení do administrace</h1>
                 <form action='admin.php' method='post'>
-                    Heslo:<br><input type='text' name='admin_password_login'><br>
+                    Heslo:<br><input type='password' name='admin_password_login'><br>
                     <input type='submit' name='button_login' value='Přihlásit'>
                 </form>";
                 if(isset($error)) {
@@ -124,12 +124,12 @@
                 <form action='admin.php' method='post'>
                     Adresa API Edookitu:<br><input type='text' name='edookit_host' value='".$config['edookit_host']."' required='required'><br>
                     Uživatelské jméno k API Edookitu:<br><input type='text' name='edookit_username' value='".$config['edookit_username']."' required='required'><br>
-                    Heslo k API Edookitu:<br><input type='text' name='edookit_password' value='".$config['edookit_password']."' required='required'><br>
+                    Heslo k API Edookitu:<br><input type='password' name='edookit_password' value='".$config['edookit_password']."' required='required'><br>
                     Adresa SQL serveru:<br><input type='text' name='sql_host' value='".$config['sql_host']."' required='required'><br>
                     Uživatelské jméno k SQL serveru:<br><input type='text' name='sql_username' value='".$config['sql_username']."' required='required'><br>
-                    Heslo k SQL serveru:<br><input type='text' name='sql_password' value='".$config['sql_password']."' required='required'><br>
+                    Heslo k SQL serveru:<br><input type='password' name='sql_password' value='".$config['sql_password']."' required='required'><br>
                     SQL databáze:<br><input type='text' name='sql_database' value='".$config['sql_database']."' required='required'><br>
-                    Heslo k administraci:<br><input type='text' name='admin_password' value='".$config['admin_password']."' required='required'><br><br>
+                    Heslo k administraci:<br><input type='password' name='admin_password' value='".$config['admin_password']."' required='required'><br><br>
                     <input type='submit' name='button_save' value='Uložit'>
                     <input type='button' value='Zobrazit rozvrh' onclick=\"window.location.href='index.php';\">
                     <input type='submit' name='button_logout' value='Odhlásit'>
