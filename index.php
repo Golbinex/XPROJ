@@ -51,7 +51,7 @@
 					echo "
 					<form action='index.php' method='post'>
 						<input type='button' value='Administrace' onclick=\"window.location.href='admin.php';\">
-						<input type='submit' name='button_export' value='Exportovat tabulku do CSV'>
+						<input type='button' value='Exportovat tabulku do CSV' onclick=\"window.location.href='export.php';\">
 						<input type='submit' name='button_logout' value='Odhlásit'>
 					</form>";
 				} else {
@@ -159,55 +159,7 @@
 						<td></td>
 					</tr>"; 
 				}
-				$config = include('config.php');
-				// Test připojení k SQL serveru
-				try {
-					$pdo = new PDO("mysql:host=".$config['sql_host'].";dbname=".$config['sql_database'], $config['sql_username'], $config['sql_password'], array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
-					// set the PDO error mode to exception
-					$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-					if(!isset($_SESSION['date_from']) or !isset($_SESSION['date_to'])) {
-						$_SESSION['date_from'] = date("Y-m-d");
-						$_SESSION['date_to'] = date("Y-m-d");
-					}
-					if($_SESSION['reverse'] == true) {
-						$sqlsort = "DESC";
-					} else {
-						$sqlsort = "ASC";
-					}
-					// Vybrat všechny záznamy z daného časového rozsahu a seřadit dle daného údaje
-					$stmt = $pdo->prepare("SELECT * FROM edookit_zmeny
-						WHERE puvodni_datum_od BETWEEN :date_from AND :date_to
-						ORDER BY :sort_item ".$sqlsort.";");
-					$date_from = $_SESSION['date_from']." 00:00";
-					$stmt->bindParam(':date_from', $date_from);
-					$date_to = $_SESSION['date_to']." 23:59";
-					$stmt->bindParam(':date_to', $date_to);
-					$stmt->bindParam(':sort_item', $_SESSION['sort'], PDO::PARAM_INT);
-					$stmt->execute();
-					$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-					if (isset($_POST['button_export'])) {
-						// https://stackoverflow.com/questions/16251625/how-to-create-and-download-a-csv-file-from-php-script
-						function array_to_csv_download($array, $filename = "export.csv", $delimiter=";") {
-							// open raw memory as file so no temp files needed, you might run out of memory though
-							$f = fopen($filename, 'w'); 
-							// loop over the input array
-							foreach ($array as $line) { 
-								// generate csv lines from the inner arrays
-								fputcsv($f, $line, $delimiter); 
-							}
-							// reset the file pointer to the start of the file
-							fseek($f, 0);
-							// make php send the generated csv lines to the browser
-							fpassthru($f);
-							echo "<input type='button' value='Stáhnout CSV soubor' onclick=\"window.location.href='export.csv';\">";
-						}
-						array_to_csv_download($result);
-					} else if (file_exists("export.csv")) unlink("export.csv");
-				} catch(PDOException $e) {
-					//echo "Problém s připojením k SQL serveru";
-					echo "Error: " . $e->getMessage();
-					exit;
-				}
+				$result = querySQL();
 				// Vlozeni dat do tabulky
 				for($i = 0; $i < count($result); $i++) {
 					// Speciální událost
