@@ -1,21 +1,11 @@
 <?php
+    include('functions.php');
     // PŘEVEDENÍ DAT Z API EDOOKITU DO SQL DATABÁZE
     if(file_exists('config.php')) {
         $config = include('config.php');
-        // Test připojení k API
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_URL, $config['edookit_host']);
-		curl_setopt($ch, CURLOPT_USERPWD, $config['edookit_username'].":".$config['edookit_password']);
-		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-		$result = curl_exec($ch);
-		curl_close($ch);
-        $result = json_decode($result, true);
-        if(!isset($result['change'])) {
+        // Příjem dat z API Edookitu
+        $result = queryEdookitAPI($config['edookit_host'], $config['edookit_username'], $config['edookit_password']);
+        if(!$result) {
             echo "Problém s připojením k API edookitu";
             exit;
         }

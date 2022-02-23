@@ -33,19 +33,7 @@
                 $config['sql_database'] = $_POST['sql_database'];
                 $config['admin_password'] = $_POST['admin_password'];
                 // Test připojení k API
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-				curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-				curl_setopt($ch, CURLOPT_URL, $_POST['edookit_host']);
-				curl_setopt($ch, CURLOPT_USERPWD, $_POST['edookit_username'].":".$_POST['edookit_password']);
-				curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-				curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-				$result = curl_exec($ch);
-				curl_close($ch);
-                $result = json_decode($result, true);
-                if(!isset($result['change'])) {
+                if(!queryEdookitAPI($_POST['edookit_host'], $_POST['edookit_username'], $_POST['edookit_password'])) {
                     adminForm("Problém s připojením k API edookitu");
                     exit;
                 }
