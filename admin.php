@@ -39,12 +39,13 @@
                 }
                 // Test připojení k SQL serveru
                 try {
-                    $pdo = new PDO("mysql:host=".$_POST['sql_host'].";dbname=".$_POST['sql_database'], $_POST['sql_username'], $_POST['sql_password']);
-                    // set the PDO error mode to exception
-                    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $pdo = new PDO("mysql:host=".$_POST['sql_host'].";dbname=".$_POST['sql_database'], $_POST['sql_username'], $_POST['sql_password'], array(
+                        PDO::ATTR_TIMEOUT => 5, // in seconds
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+                    ));
                     // Vytvoření tabulky se změnami, pokud tabulka neexistuje
                     try {
-                        $sql = "CREATE TABLE edookit_zmeny (
+                        $stmt = $pdo->prepare("CREATE TABLE edookit_zmeny (
                             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                             puvodni_datum_od DATETIME,
                             puvodni_datum_do DATETIME,
@@ -59,8 +60,8 @@
                             nova_mistnost VARCHAR(63),
                             udalost VARCHAR(127),
                             UNIQUE(puvodni_datum_od, puvodni_datum_do, nove_datum_od, nove_datum_do, trida, puvodni_ucitel, novy_ucitel, puvodni_kurz, novy_kurz, puvodni_mistnost, nova_mistnost, udalost)
-                        )";
-                        $pdo->exec($sql);
+                        )");
+                        $stmt->execute();
                     } catch (Exception $e) {
                         //echo $sql . "<br>" . $e->getMessage();
                     }

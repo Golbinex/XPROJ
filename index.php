@@ -18,7 +18,7 @@
 				setAuthenticated(false);
 				$_SESSION['date_from'] = date("Y-m-d");
 				$_SESSION['date_to'] = date("Y-m-d");
-				$_SESSION['sort'] = "puvodni_datum_od";
+				$_SESSION['sort'] = 6;
 				$_SESSION['reverse'] = false;
 			}
 			// Pokud je uživatel přihlášen, zobrazovat jen jeden sloupec, jinak zobrazovat dva
@@ -74,20 +74,20 @@
 		<div>
 		<table>
 			<?php
-				if(!isset($_SESSION['sort'])) $_SESSION['sort'] = "puvodni_datum_od";
+				if(!isset($_SESSION['sort'])) $_SESSION['sort'] = 6;
 				if(isAuthenticated()) {
 					if(isset($_GET['sort'])) $_SESSION['sort'] = $_GET['sort'];
 					if(isset($_GET['reverse'])) $_SESSION['reverse'] = filter_var($_GET['reverse'], FILTER_VALIDATE_BOOLEAN);
 					// Funkce pro zobrazení třídícího tlačítka
-					function sortButton($text, $sqlname, $colspan = 1, $color = "black") {
-						echo "<td colspan='".$colspan."' style='color: ".$color."'><b><a href='index.php?sort=".$sqlname;
-						if($_SESSION['sort'] == $sqlname and $_SESSION['reverse'] == false) {
+					function sortButton($text, $column_number, $colspan = 1, $color = "black") {
+						echo "<td colspan='".$colspan."' style='color: ".$color."'><b><a href='index.php?sort=".$column_number;
+						if($_SESSION['sort'] == $column_number and $_SESSION['reverse'] == false) {
 							echo "&reverse=true";
 						} else {
 							echo "&reverse=false";
 						}
 						echo "'>".$text;
-						if($_SESSION['sort'] == $sqlname) {
+						if($_SESSION['sort'] == $column_number) {
 							if($_SESSION['reverse'] == true) {
 								echo " ↑";
 							} else {
@@ -97,14 +97,14 @@
 						echo "</b></td></a>";
 					}
 					echo "<tr class='headtr'>";
-					sortButton("Třída", "trida");
+					sortButton("Třída", 6);
 					echo "
 						<td><b>Datum</b></td>
 						<td colspan='2'><b>Hodina</b></td>
 						<td colspan='2'><b>Učitel</b></td>
 						<td colspan='2'><b>Kurz</b></td>
 						<td colspan='2'><b>Místnost</b></td>";
-					sortButton("Událost", "udalost", 2);
+					sortButton("Událost", 13, 2);
 					// Pokud není nastavený rozsah, nastavit na dnešní datum
 					if(!isset($_SESSION['date_from']) or !isset($_SESSION['date_to'])) {
 						$_SESSION['date_from'] = date("Y-m-d");
@@ -127,14 +127,14 @@
 							<input type='submit' name='date_update' value='Aktualizovat'>";
 					if($error) echo "<br><b style='color:red'>Nesprávný rozsah</b>";
 					echo "</form></td>";
-					sortButton("✘", "puvodni_datum_od", 1, "red");
-					sortButton("✔", "nove_datum_od", 1, "green");
-					sortButton("✘", "puvodni_ucitel", 1, "red");
-					sortButton("✔", "novy_ucitel", 1, "green");
-					sortButton("✘", "puvodni_kurz", 1, "red");
-					sortButton("✔", "novy_kurz", 1, "green");
-					sortButton("✘", "puvodni_mistnost", 1, "red");
-					sortButton("✔", "nova_mistnost", 1, "green");
+					sortButton("✘", 2, 1, "red");
+					sortButton("✔", 4, 1, "green");
+					sortButton("✘", 7, 1, "red");
+					sortButton("✔", 8, 1, "green");
+					sortButton("✘", 9, 1, "red");
+					sortButton("✔", 10, 1, "green");
+					sortButton("✘", 11, 1, "red");
+					sortButton("✔", 12, 1, "green");
 					echo "<td></td></tr>";
 				} else {
 					echo "
@@ -175,9 +175,15 @@
 						$sqlsort = "ASC";
 					}
 					// Vybrat všechny záznamy z daného časového rozsahu a seřadit dle daného údaje
-					$stmt = $pdo->query("SELECT * FROM edookit_zmeny
-						WHERE puvodni_datum_od BETWEEN '".$_SESSION['date_from']." 00:00' AND '".$_SESSION['date_to']." 23:59'
-						ORDER BY `".$_SESSION['sort']."` ".$sqlsort.";");
+					$stmt = $pdo->prepare("SELECT * FROM edookit_zmeny
+						WHERE puvodni_datum_od BETWEEN :date_from AND :date_to
+						ORDER BY :sort_item ".$sqlsort.";");
+					$date_from = $_SESSION['date_from']." 00:00";
+					$stmt->bindParam(':date_from', $date_from);
+					$date_to = $_SESSION['date_to']." 23:59";
+					$stmt->bindParam(':date_to', $date_to);
+					$stmt->bindParam(':sort_item', $_SESSION['sort'], PDO::PARAM_INT);
+					$stmt->execute();
 					$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 					if (isset($_POST['button_export'])) {
 						// https://stackoverflow.com/questions/16251625/how-to-create-and-download-a-csv-file-from-php-script
